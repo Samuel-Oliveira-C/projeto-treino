@@ -3,6 +3,8 @@ package org.treino.demo.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.treino.demo.dtos.requests.CustomerRequestDTO;
+import org.treino.demo.dtos.responses.CustomerResponseDTO;
 import org.treino.demo.entities.CustomerEntity;
 import org.treino.demo.services.CustomerService;
 
@@ -25,12 +27,12 @@ public class CustomerController {
     }
 
     @PostMapping()
-    public ResponseEntity<CustomerEntity> create(@Valid @RequestBody CustomerEntity entity) {
-        CustomerEntity createdCustomer = customerService.createCustomer(entity);
+    public ResponseEntity<CustomerResponseDTO> create(@Valid @RequestBody CustomerRequestDTO entity) {
+        CustomerResponseDTO createdCustomer = customerService.createCustomer(entity);
         URI uri = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
-                    .buildAndExpand(createdCustomer.getId())
+                    .buildAndExpand(createdCustomer.id())
                     .toUri();
         return ResponseEntity.created(uri).body(createdCustomer);
     }
