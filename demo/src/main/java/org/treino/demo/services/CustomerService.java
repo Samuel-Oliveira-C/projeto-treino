@@ -51,4 +51,12 @@ public class CustomerService {
         return customerRepository.findAll(pageable)
                 .map(customerMapper::toResponse);
     }
+
+    @Transactional //REFATORAR QUANDO FIZER AS ASSOCIAÇÕES
+    public void deleteCustomer(UUID id) {
+        if (!customerRepository.existsById(id)) {
+            throw new RuntimeException("Customer not found");
+        }
+        customerRepository.deleteById(id);
+    }
 }
