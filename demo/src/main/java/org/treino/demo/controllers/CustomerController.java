@@ -36,5 +36,4 @@ public class CustomerController {
                     .toUri();
         return ResponseEntity.created(uri).body(createdCustomer);
     }
-    
 }
