@@ -10,7 +10,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -36,15 +39,21 @@ public class OrderEntity {
     private StatusOrderEntity status = StatusOrderEntity.WAITING_PAYMENT;
 
     @NotNull
+    @ManyToOne(fetch =  FetchType.LAZY, optional = false)
+    @JoinColumn(name = "customer_id", nullable = false)
+    private CustomerEntity customer;
+
+    @NotNull
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
     public OrderEntity() {}
 
-    public OrderEntity(UUID id, BigDecimal totalAmount, StatusOrderEntity status) {
+    public OrderEntity(UUID id, BigDecimal totalAmount, StatusOrderEntity status, CustomerEntity customer) {
         this.id = id;
         this.totalAmount = totalAmount;
         this.status = status;
+        this.customer = customer;
     }
 
     public UUID getId() {
@@ -78,6 +87,14 @@ public class OrderEntity {
     @PrePersist
     public void prePersist() {
         this.createdAt = Instant.now();
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
     @Override

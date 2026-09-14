@@ -1,6 +1,8 @@
 package org.treino.demo.entities;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -8,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -36,6 +39,9 @@ public class CustomerEntity{
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
+
+    @OneToMany(mappedBy = "customer")
+    private List<OrderEntity> orders = new ArrayList<>();
     
     public CustomerEntity() {
     }
@@ -86,6 +92,20 @@ public class CustomerEntity{
     @PrePersist
     public void prePersist(){
         createdAt = Instant.now();
+    }
+
+    public List<OrderEntity> getOrders() {
+        return orders;
+    }
+
+    public void addOrder(OrderEntity order) {
+        orders.add(order);
+        order.setCustomer(this);
+    }
+
+    public void removeOrder(OrderEntity order) {
+        orders.remove(order);
+        order.setCustomer(null);
     }
 
     @Override
