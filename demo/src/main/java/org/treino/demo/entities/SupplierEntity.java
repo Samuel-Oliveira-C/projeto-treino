@@ -29,7 +29,7 @@ public class SupplierEntity {
 
     @NotBlank
     @CNPJ
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, name = "document_cnpj")
     private String documentCNPJ;
 
     @NotBlank
