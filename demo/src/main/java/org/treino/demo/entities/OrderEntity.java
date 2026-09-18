@@ -53,7 +53,7 @@ public class OrderEntity {
         this.id = id;
         this.totalAmount = totalAmount;
         this.status = status;
-        this.customer = customer;
+        setCustomer(customer);
     }
 
     public UUID getId() {
@@ -94,7 +94,23 @@ public class OrderEntity {
     }
 
     public void setCustomer(CustomerEntity customer) {
+        if (this.customer == customer) {
+            if (customer != null) {
+                customer.addOrderReference(this);
+            }
+            return;
+        }
+
+        CustomerEntity previousCustomer = this.customer;
         this.customer = customer;
+
+        if (previousCustomer != null) {
+            previousCustomer.removeOrderReference(this);
+        }
+
+        if (customer != null) {
+            customer.addOrderReference(this);
+        }
     }
 
     @Override
