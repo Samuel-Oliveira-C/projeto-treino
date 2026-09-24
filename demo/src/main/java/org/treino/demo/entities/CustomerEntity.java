@@ -1,13 +1,18 @@
 package org.treino.demo.entities;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -36,6 +41,13 @@ public class CustomerEntity{
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
+
+    @OneToMany(
+        mappedBy = "customer",
+        orphanRemoval = true,
+        cascade = CascadeType.ALL
+    )
+    private List<OrderEntity> orders = new ArrayList<>();
     
     public CustomerEntity() {
     }
@@ -86,6 +98,38 @@ public class CustomerEntity{
     @PrePersist
     public void prePersist(){
         createdAt = Instant.now();
+    }
+
+    public List<OrderEntity> getOrders() {
+        return Collections.unmodifiableList(orders);
+    }
+
+    public void addOrder(OrderEntity order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null");
+        }
+
+        order.setCustomer(this);
+    }
+
+    public void removeOrder(OrderEntity order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order not found in the customer's orders");
+        }
+
+        if (order.getCustomer() == this) {
+            order.setCustomer(null);
+        }
+    }
+
+    void addOrderReference(OrderEntity order) {
+        if (!orders.contains(order)) {
+            orders.add(order);
+        }
+    }
+
+    void removeOrderReference(OrderEntity order) {
+        orders.remove(order);
     }
 
     @Override
