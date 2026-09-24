@@ -9,17 +9,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record OrderRequestDTO(
-    UUID orderID,
-
     @NotNull @Positive BigDecimal totalAmount, 
     
     StatusOrderEntity status, 
     
     @NotNull UUID customerID) {
     
-    public OrderRequestDTO{
-        if(status == null){
-            status = StatusOrderEntity.WAITING_PAYMENT;
-        }
-    }
 }
