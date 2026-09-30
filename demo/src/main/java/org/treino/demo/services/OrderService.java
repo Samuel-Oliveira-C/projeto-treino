@@ -83,6 +83,29 @@ public class OrderService {
     }
 
     @Transactional
+    public OrderResponseDTO cancelOrder(UUID orderID) {
+        OrderEntity order = orderRepository.findById(orderID)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Order not found with ID: " + orderID));
+
+        if (order.getStatus() == StatusOrderEntity.CANCELED) {
+            return orderMapper.toResponse(order);
+        }
+
+        if (order.getStatus() != StatusOrderEntity.WAITING_PAYMENT
+                && order.getStatus() != StatusOrderEntity.PREPARING
+                && order.getStatus() != StatusOrderEntity.READY) {
+            throw new InvalidOrderStatusTransitionException(
+                    "Invalid status transition from "
+                            + order.getStatus() + " to " + StatusOrderEntity.CANCELED);
+        }
+
+        order.setStatus(StatusOrderEntity.CANCELED);
+
+        return orderMapper.toResponse(orderRepository.save(order));
+    }
+
+    @Transactional
     public OrderResponseDTO updateOrderStatus(UUID orderID, StatusOrderEntity newStatus) {
         OrderEntity order = orderRepository.findById(orderID)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -113,20 +136,13 @@ public class OrderService {
 
         switch (currentStatus) {
             case WAITING_PAYMENT:
-                return newStatus == StatusOrderEntity.PREPARING
-                        || newStatus == StatusOrderEntity.CANCELED;
+                return newStatus == StatusOrderEntity.PREPARING;
 
             case PREPARING:
-                return newStatus == StatusOrderEntity.READY
-                        || newStatus == StatusOrderEntity.CANCELED;
+                return newStatus == StatusOrderEntity.READY;
 
             case READY:
-                return newStatus == StatusOrderEntity.DELIVERED
-                        || newStatus == StatusOrderEntity.CANCELED;
-
-            case DELIVERED:
-            case CANCELED:
-                return false;
+                return newStatus == StatusOrderEntity.DELIVERED;
 
             default:
                 return false;
