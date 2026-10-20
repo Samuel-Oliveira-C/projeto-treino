@@ -10,7 +10,7 @@ import org.treino.demo.exceptions.OrderDeletionNotAllowedException;
 import org.treino.demo.exceptions.ResourceNotFoundException;
 
 @RestControllerAdvice
-public class HandlerOrderException {
+public class GlobalHandlerException {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ProblemDetail> handleResourceNotFound(
