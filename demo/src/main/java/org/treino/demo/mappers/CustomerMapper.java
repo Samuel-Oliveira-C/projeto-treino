@@ -9,12 +9,14 @@ import org.treino.demo.entities.CustomerEntity;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
-    
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "orders", ignore = true)
     CustomerEntity toEntity(CustomerRequestDTO dto);
 
     CustomerResponseDTO toResponse(CustomerEntity entity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "orders", ignore = true)
     void updateEntityFromDto(CustomerRequestDTO dto, @MappingTarget CustomerEntity entity);
 }

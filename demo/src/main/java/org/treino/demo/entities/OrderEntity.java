@@ -2,10 +2,14 @@ package org.treino.demo.entities;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.treino.demo.enums.StatusOrderEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +18,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -46,6 +51,13 @@ public class OrderEntity {
     @NotNull
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
+
+    @OneToMany(
+        mappedBy = "order",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<OrderItemEntity> items = new ArrayList<>();
 
     public OrderEntity() {}
 
@@ -111,6 +123,38 @@ public class OrderEntity {
         if (customer != null) {
             customer.addOrderReference(this);
         }
+    }
+
+    public List<OrderItemEntity> getItems() {
+        return Collections.unmodifiableList(items);
+    }
+
+    public void addItem(OrderItemEntity item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Order item cannot be null");
+        }
+
+        item.setOrder(this);
+    }
+
+    public void removeItem(OrderItemEntity item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Order item cannot be null");
+        }
+
+        if (item.getOrder() == this) {
+            items.remove(item);
+        }
+    }
+
+    void addItemReference(OrderItemEntity item) {
+        if (!items.contains(item)) {
+            items.add(item);
+        }
+    }
+
+    void removeItemReference(OrderItemEntity item) {
+        items.remove(item);
     }
 
     @Override

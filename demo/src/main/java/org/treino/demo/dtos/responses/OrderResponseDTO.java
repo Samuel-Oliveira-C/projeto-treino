@@ -2,6 +2,7 @@ package org.treino.demo.dtos.responses;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -12,6 +13,7 @@ public record OrderResponseDTO(
     BigDecimal totalAmount, 
     StatusOrderEntity status,
     UUID customerID,
-    Instant createdAt) {
-    
+    Instant createdAt,
+    List<OrderItemResponseDTO> items
+) {
 }
