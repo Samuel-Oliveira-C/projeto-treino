@@ -1,18 +1,14 @@
 package org.treino.demo.dtos.requests;
 
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
-import org.treino.demo.enums.StatusOrderEntity;
-
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.Valid;
 
 public record OrderRequestDTO(
-    @NotNull @Positive BigDecimal totalAmount, 
-    
-    StatusOrderEntity status, 
-    
-    @NotNull UUID customerID) {
-    
+    @NotNull UUID customerID,
+    @NotEmpty List<@Valid OrderItemRequestDTO> items
+) {
 }

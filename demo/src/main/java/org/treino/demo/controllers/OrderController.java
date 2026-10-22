@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.treino.demo.dtos.requests.OrderRequestDTO;
+import org.treino.demo.dtos.requests.PaymentRequestDTO;
 import org.treino.demo.dtos.requests.UpdateOrderStatusRequestDTO;
 import org.treino.demo.dtos.responses.OrderResponseDTO;
 import org.treino.demo.services.OrderService;
@@ -65,6 +66,13 @@ public class OrderController {
     @PostMapping("/{id}/cancel")
     public ResponseEntity<OrderResponseDTO> cancel(@PathVariable UUID id) {
         return ResponseEntity.ok(orderService.cancelOrder(id));
+    }
+
+    @PostMapping("/{id}/payment")
+    public ResponseEntity<OrderResponseDTO> confirmPayment(
+            @PathVariable UUID id,
+            @Valid @RequestBody PaymentRequestDTO request) {
+        return ResponseEntity.ok(orderService.confirmPayment(id, request));
     }
 
     @DeleteMapping("/{id}")
